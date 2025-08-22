@@ -1,6 +1,6 @@
 # gpg-vault v0.1.0
 
-Easy-to-use Bash script for symmetric encryption and decryption of files/folders using GPG.
+Basic Bash script for symmetric encryption and decryption of files using GPG.
 
 ## Features
 
