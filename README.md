@@ -1,21 +1,22 @@
-# gpg-vault v0.4.0
+# gpg-vault v0.5.0
 
-Easy-to-use Bash script for symmetric encryption and decryption of files or folders using GPG, with improved zip-before-encrypt functionality and robust error handling.
+Easy-to-use Bash script for symmetric encryption and decryption of files or folders using GPG, with enhanced dependency management and improved zip-before-encrypt usability.
 
-## What's New in v0.4.0
+## What's New in v0.5.0
 
-- Added error detection for zip compression and GPG encryption commands.
-- Ensures original files/folders are deleted only after successful encryption.
-- Improved user feedback on failures.
-- Refined command-line option parsing and script flow.
+- Automatically checks for the presence of the `zip` utility before zip operations.
+- If missing, prompts the user to install `zip` automatically, supporting common package managers (apt-get, yum, brew).
+- Provides fallback manual installation instructions if automatic installation isn’t possible.
+- Uses quiet mode to reduce clutter when creating zip archives.
+- Improves script robustness and user experience relating to the zip dependency.
 
 ## Features
 
 - Symmetric encryption/decryption of files and folders using GPG and gpgtar.
-- Optional zip-before-encrypt operation with `-z` flag to compress targets first.
-- Handles existing zip archive name conflicts with user options.
-- Safe removal of originals after successful encryption.
-- Clear, user-friendly CLI interface and feedback.
+- Optional zip-before-encrypt with `-z` flag to compress targets first, now with automatic zip installation check.
+- Interactive prompts to manage existing zip archives (overwrite, skip, rename).
+- Safe cleanup of originals after successful encryption.
+- Friendly command-line interface with clear usage and error messaging.
 
 ## Usage
 
@@ -68,7 +69,7 @@ vault.sh -h
 
 ## Version
 
-This is version **0.4.0**, the initial simple implementation.
+This is version **0.5.0**, the initial simple implementation.
 
 ## Author
 
