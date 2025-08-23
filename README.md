@@ -1,20 +1,21 @@
-# gpg-vault v0.2.0
+# gpg-vault v0.3.0
 
-Easy-to-use Bash script for symmetric encryption and decryption of files or folders using GPG.
+Easy-to-use Bash script for symmetric encryption and decryption of files or folders using GPG, now with optional zip+encrypt!
 
-## What's New in v0.2.0
+## What's New in v0.3.0
 
-- Adds support for secure encryption/decryption of entire **folders** using `gpgtar`.
-- Auto-detects whether the input is a folder (`.tar.gpg`), encrypted file (`.gpg`), or unsupported type.
-- Cleaner and more informative user messages.
-- Improved help text and script structure.
+- **Zip Before Encryption:** Use `-z` option with `-l` to zip a file or folder before encrypting, producing `<name>.zip.gpg`.
+- **Intelligent Overwrite Handling:** Script prompts to overwrite, skip, or rename if destination zip exists.
+- **Refined Command-Line Use:** Streamlined flags for improved UX.
+- **Improved Help Descriptions:** Clearer, more complete help output.
 
 ## Features
 
-- Symmetric encryption/decryption for both files and folders.
-- Uses GPG for files and gpgtar for folder operations.
-- Overwrites the original file or folder after encryption for added security.
-- Command-line interface with helpful error handling.
+- Symmetric GPG encryption/decryption of files and folders.
+- Zip files or folders prior to encryption with the `-z` option.
+- Removes original files/folders after successful encryption.
+- Auto-handles overwrites for zip archives, keeping your data safe.
+- Helpful command-line error messages and prompts.
 
 ## Usage
 
@@ -28,15 +29,25 @@ vault.sh -o <encrypted-file-or-folder>
 vault.sh -l <file-or-folder>
 ```
 
+### Encrypt (zip first) a file or folder
+```sh
+vault.sh -l <file-or-folder> -z
+```
+
 ### Display help
 ```sh
 vault.sh -h
 ```
 
-Supported formats:
-- To encrypt a folder: The output will be a `.tar.gpg` encrypted archive
-- To decrypt a `.tar.gpg` file: The folder will be extracted after decryption
-- Regular files use `.gpg` extension when encrypted
+**Examples:**
+- Encrypt a directory with zip-then-encrypt:
+```sh
+./vault.sh -l myfolder -z
+```
+- Decrypt a zipped+encrypted archive:
+```sh
+./vault.sh -o myfolder.zip.gpg
+```
 
 ## Installation
 
@@ -57,7 +68,7 @@ Supported formats:
 
 ## Version
 
-This is version **0.2.0**, the initial simple implementation.
+This is version **0.3.0**, the initial simple implementation.
 
 ## Author
 
