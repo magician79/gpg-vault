@@ -40,6 +40,39 @@ Encrypt() {
 # Encrypt after creating zip file                                              #
 ################################################################################
 EncryptZip() {
+    # Check if zip is installed
+    if ! command -v zip &> /dev/null; then
+        echo "The 'zip' utility is not installed."
+        read -p "Do you want to install it now? [Y/n]: " answer
+        answer=${answer:-Y}
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            # Detect platform and install
+            if command -v apt-get &> /dev/null; then
+                sudo apt-get update && sudo apt-get install -y zip
+            elif command -v yum &> /dev/null; then
+                sudo yum install -y zip
+            elif command -v brew &> /dev/null; then
+                brew install zip
+            else
+                echo "Could not detect package manager. Please install 'zip' manually."
+			       echo "For example:"
+        			 echo "  sudo apt-get install zip       # Debian/Ubuntu"
+        			 echo "  sudo yum install zip           # RedHat/CentOS"
+        			 echo "  brew install zip               # macOS"
+                exit 1
+            fi
+
+            # Re-check if zip installed successfully
+            if ! command -v zip &> /dev/null; then
+                echo "Installation failed. Please install 'zip' manually."
+                exit 1
+            fi
+        else
+            echo "Cannot proceed without 'zip' when using the -z (zip) option. Exiting."
+            exit 1
+        fi
+    fi
+
     local TARGET="$1"
     local ZIPNAME="${TARGET}.zip"
 
@@ -56,7 +89,7 @@ EncryptZip() {
     fi
 
     echo "Zipping '$TARGET' to '$ZIPNAME'..."
-    zip -r "$ZIPNAME" "$TARGET"
+    zip -rq "$ZIPNAME" "$TARGET"
     if [ $? -ne 0 ]; then
         echo "Zip operation failed."; exit 1
     fi
