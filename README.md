@@ -1,23 +1,31 @@
-# gpg-vault v0.1.0
+# gpg-vault v0.2.0
 
-Basic Bash script for symmetric encryption and decryption of files using GPG.
+Easy-to-use Bash script for symmetric encryption and decryption of files or folders using GPG.
+
+## What's New in v0.2.0
+
+- Adds support for secure encryption/decryption of entire **folders** using `gpgtar`.
+- Auto-detects whether the input is a folder (`.tar.gpg`), encrypted file (`.gpg`), or unsupported type.
+- Cleaner and more informative user messages.
+- Improved help text and script structure.
 
 ## Features
 
-- Basic symmetric encryption of a single file
-- Basic decryption of a single file
-- Simple command-line interface
+- Symmetric encryption/decryption for both files and folders.
+- Uses GPG for files and gpgtar for folder operations.
+- Overwrites the original file or folder after encryption for added security.
+- Command-line interface with helpful error handling.
 
 ## Usage
 
 ### Decrypt a file
 ```sh
-vault.sh -o <encrypted-file>
+vault.sh -o <encrypted-file-or-folder>
 ```
 
 ### Encrypt a file
 ```sh
-vault.sh -l <file>
+vault.sh -l <file-or-folder>
 ```
 
 ### Display help
@@ -25,10 +33,14 @@ vault.sh -l <file>
 vault.sh -h
 ```
 
+Supported formats:
+- To encrypt a folder: The output will be a `.tar.gpg` encrypted archive
+- To decrypt a `.tar.gpg` file: The folder will be extracted after decryption
+- Regular files use `.gpg` extension when encrypted
 
 ## Installation
 
-1. Clone the repository:  
+1. Clone the repository:
    ```sh
    git clone https://github.com/magician79/gpg-vault.git
    ```
@@ -45,7 +57,7 @@ vault.sh -h
 
 ## Version
 
-This is version **0.1.0**, the initial simple implementation.
+This is version **0.2.0**, the initial simple implementation.
 
 ## Author
 
