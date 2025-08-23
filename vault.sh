@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-# Decrypt                                                                         #
+# Decrypt                                                                      #
 ################################################################################
 Decrypt()
 {
@@ -21,7 +21,7 @@ Decrypt()
 }
 
 ################################################################################
-# Encrypt                                                                         #
+# Encrypt                                                                      #
 ################################################################################
 Encrypt()
 {
@@ -41,6 +41,30 @@ Encrypt()
 }
 
 ################################################################################
+# Encrypt after creating zip file                                              #
+################################################################################
+EncryptZip() {
+    local TARGET="$1"
+    local ZIPNAME="${TARGET}.zip"
+    if [ -e "$ZIPNAME" ]; then
+        echo "Warning: '$ZIPNAME' already exists."
+        echo "Press Enter to [O]verwrite, S to [S]kip, R to [R]ename:"
+        read -r choice
+        case "$choice" in
+            ""|[Oo]*) rm -f "$ZIPNAME";;
+            [Ss]*) echo "Skipping zip operation."; exit 0;;
+            [Rr]*) ZIPNAME="${TARGET}_$(date +%Y%m%d%H%M%S).zip";;
+            *) echo "Invalid choice. Exiting."; exit 1;;
+        esac
+    fi
+    echo "Zipping '$TARGET' to '$ZIPNAME'..."
+    zip -r "$ZIPNAME" "$TARGET"
+    echo "Encrypting zipped file '$ZIPNAME' using gpg..."
+    gpg --symmetric -o "${ZIPNAME}.gpg" "$ZIPNAME" && rm -rf "$TARGET" "$ZIPNAME"
+    echo "File or folder '$TARGET' zipped and encrypted to '${ZIPNAME}.gpg'."
+}
+
+################################################################################
 # Help                                                                         #
 ################################################################################
 Help()
@@ -48,10 +72,11 @@ Help()
    # Display Help
    echo "This is a tool to encrypt/decrypt files with gpg"
    echo
-   echo "Syntax: vault [-o|l] <file> | [-h]"
+   echo "Syntax: vault [-o <file>] | [-l <file|folder> [-z]] | [-h]"
    echo "options:"
    echo "o     Opens the safe i.e. decrypyts the file provide"
    echo "l     Locks the safe i.e. encrypts the file provided"
+   echo "z		 Zip the file or folder before encryption (use with -l)"
    echo "h     Print this Help."
    echo
 }
@@ -62,21 +87,26 @@ if [[ $# -eq 0 ]]; then
     exit;
 fi
 
-while getopts "o:l:h" option; do
-   case $option in
-      o) # decrypt file
-         FNAME=$OPTARG
-         Decrypt $FNAME
-         exit;;
-      l) # encrypt file
-         FNAME=$OPTARG
-         Encrypt $FNAME
-         exit;;
-      h) # display Help
-         Help
-         exit;;
-     \?) # incorrect option
-         echo "Error: Invalid option"
-         exit;;
-   esac
+while getopts "o:l:zh" option; do
+    case $option in
+        o) # decrypt
+            FNAME=$OPTARG
+            Decrypt $FNAME
+            exit;;
+        l) # encrypt
+            FNAME=$OPTARG
+            ENCRYPT_MODE="normal"
+            ;;
+        z) # zip before encrypt (sets mode)
+            ENCRYPT_MODE="zip"
+            ;;
+        h) Help; exit;;
+        \?) echo "Error: Invalid option"; exit;;
+    esac
 done
+
+if [[ $ENCRYPT_MODE == "zip" ]]; then
+    EncryptZip $FNAME
+else
+    Encrypt $FNAME
+fi
