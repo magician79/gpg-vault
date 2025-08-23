@@ -5,11 +5,19 @@
 ################################################################################
 Decrypt()
 {
-   # Decrypt file
-   echo "decrypting file $1"
-   gpg $1
-   echo RELOADAGENT | gpg-connect-agent
-   echo
+   # Decrypt folder or file
+	 if [[ "$1" == *.tar.gpg ]]; then
+	  echo "Decrypting folder '${1}' using gpgtar..."
+	  gpgtar --decrypt --directory . "$1"
+	  echo "Folder decrypted from '${1}' to '${1%.tar.gpg}'."
+	 elif [[ "$1" == *.gpg ]]; then
+	  echo "Decrypting file '${1}' using gpg..."
+	  gpg --decrypt "$1" > "${1%.gpg}"
+	  echo "File decrypted from '${1}' to '${1%.gpg}'."
+	 else
+	  echo "Error: '$1' does not appear to be an encrypted file or folder."
+	  exit 1
+	 fi
 }
 
 ################################################################################
@@ -17,10 +25,19 @@ Decrypt()
 ################################################################################
 Encrypt()
 {
-   # Encrypt file
-   echo "encrypting file $1"
-   gpg --symmetric $1 && rm -rf $1
-   echo
+	# Encrypt folder or file
+	 if [ -d "$1" ]; then
+	  echo "Encrypting folder '$1' using gpgtar..."
+	  gpgtar --symmetric -o "${1}.tar.gpg" "$1" && rm -rf "$1"
+	  echo "Folder '$1' encrypted to '${1}.tar.gpg'."
+	 elif [ -f "$1" ]; then
+	  echo "Encrypting file '$1' using gpg..."
+	  gpg --symmetric -o "${1}.gpg" "$1" && rm -rf "$1"
+	  echo "File '$1' encrypted to '${1}.gpg'."
+	 else
+	  echo "Error: '$1' is neither a file nor a directory."
+	  exit 1
+	 fi
 }
 
 ################################################################################
@@ -63,4 +80,3 @@ while getopts "o:l:h" option; do
          exit;;
    esac
 done
-
